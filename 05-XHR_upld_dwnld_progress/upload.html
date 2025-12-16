@@ -1,0 +1,37 @@
+<html>
+  <body>
+    <input type="file">
+    <script>
+      let fileUpLoadButton = document.getElementsByTagName("input")[0];
+      fileUpLoadButton.addEventListener('change', upload);
+
+      // define the upload function
+      // We'll use the fileAPI (given to us by the browser) to access the file selected by the user.
+      // There is a property on every input element of type file called 'files'.
+      function upload(event) {
+        let fileSelected = this.files[0];
+        console.log(fileSelected);
+
+        // Step 1: setup our AJAX engine / object.
+        let xhr = new XMLHttpRequest();
+        // Step 2: listen for events
+        xhr.upload.onprogress = (event) => {
+          console.log(`Uploaded ${event.loaded} of ${event.total} bytes`);
+        }
+
+        xhr.onloadend = (event) => {
+          //if(xhr.status == 200) { //This would work if we had a real server to talk to.
+          if (true) {
+            console.log('Successfully uploaded');
+          } else {
+            console.log('Error during upload: ' + this.status);
+          }
+        };
+
+        xhr.open('POST', 'fakeURL');
+        // Step 3: send the file
+        xhr.send(fileSelected);
+      }
+    </script>
+  </body>
+</html>

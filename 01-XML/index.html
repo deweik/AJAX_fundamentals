@@ -1,0 +1,25 @@
+<html>
+  <body>
+    <h1>Example of using XML</h1>
+    <div>
+      <b>Type of animal: </b><span id="type"></span><br />
+      <b>Sound of animal: </b><span id="sound"></span>
+    </div>
+    <script>
+      // In real life, you would fetch this XML data from a 3rd party source.
+      let animalXMLData = `
+        <animal>
+          <type>Dog</type>
+          <sound>Woof</sound>
+        </animal>
+      `;
+      
+      // Lets use the XML parser
+      let XMLparser = new DOMParser();
+      let xmlDocumentTree = XMLparser.parseFromString(animalXMLData, "text/xml");
+      document.getElementById('type').innerHTML = xmlDocumentTree.getElementsByTagName('animal')[0].childNodes[1].textContent;
+      // console.log(xmlDocumentTree.getElementsByTagName('animal')[0].childNodes);
+      document.getElementById('sound').innerHTML = xmlDocumentTree.getElementsByTagName('animal')[0].childNodes[3].textContent;
+    </script>
+  </body>
+</html>

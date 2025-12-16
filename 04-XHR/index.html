@@ -1,0 +1,90 @@
+<html>
+  <body>
+    <button>Click me</button>
+    
+    <button>DownLoad</button> <!-- Button is dynamically assigned a link (see button2 below) -->
+    
+    <a href="./message.txt" download>Download</a>  <!-- HTML5 download attribute -->
+    
+                                                  <!-- Another way to style the download link -->
+    <a href="./message.txt" download 
+      style="
+        display:inline-block;
+        padding:8px 14px;
+        background-color:#009688;
+        color:white;
+        text-decoration:none;
+        border-radius:4px;
+        font-family:Arial, sans-serif;
+        cursor:pointer;
+      "
+    >Download</a>
+    
+    <script>
+      let button1 = document.getElementsByTagName("button")[0];
+      button1.addEventListener("click", function() {
+        // step 1. set up our AJAX object
+        let xhr = new XMLHttpRequest();
+        
+
+        // step 2. configure our XHR object
+        let url = "./message.txt";
+        let method = "GET";
+        xhr.open(method, url);
+        xhr.responseType = 'text'; // default is 'text', can be omitted. Other options: 'arraybuffer', 'blob', 'document', 'json', 'text'
+
+        // step 3. listen for events
+
+        // *** Example 1: download progress event ***
+        xhr.onprogress = (e) => {
+          console.log(`Downloaded ${e.loaded} of ${e.total} bytes`); // total might be 0 if server doesn't send Content-Length header);
+        }
+
+
+        xhr. onerror = () => {
+          console.log('this was triggered by the onerror event and is therefore a network-level error');
+        }
+
+        xhr.onload = () => {
+          if(xhr.status === 200) {
+            document.write('You have been successful, and here is your secret message: ' + xhr.responseText + "<br>");
+          } else {
+            if(xhr.status === 404) {
+              document.write('The requested resource was not found on this server.<br>');
+            }
+          }
+        }
+
+        // step 4. send the request to the server
+        xhr.send();
+        
+      })
+
+      let button2 = document.getElementsByTagName("button")[1];
+      button2.addEventListener("click", function() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', './message.txt', true);
+        xhr.responseType = 'blob';
+
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            const blob = xhr.response;
+            const url = URL.createObjectURL(blob);
+
+            // Dynamically create an anchor element to trigger the download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Download File';
+            document.body.appendChild(a);
+
+            a.click();
+          } else {
+            console.log('File download failed. Status: ' + xhr.status);
+          }
+          
+        };
+        xhr.send();
+      })
+    </script>
+  </body>
+</html>

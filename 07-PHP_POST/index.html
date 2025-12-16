@@ -1,0 +1,45 @@
+<html>
+<head>
+  <title>PHP POST REQUEST</title>
+</head>
+<body>
+  <form  id="mainForm">
+    <label>Username</label>
+    <div>
+      <input type="text" name="username">
+      <br>
+      <label>Comment:</label>
+      <div>
+        <textarea name="comment"></textarea>
+      </div>
+      <p><button onclick="postComment(event)">Post Comment</button></p>
+    </div>
+  </form>
+  <div id="result">
+    <p>Content of this DIV box will be replaced by the server response</p>
+  </div>
+  <script>
+    function postComment(e) {
+      e.preventDefault(); // prevent the form from submitting the default way
+    
+      // Step 1: set up our AJAX Object/engine
+      let xhr = new XMLHttpRequest();
+      // Step 2: configure our AJAX request
+      let method = 'POST';
+      let url = "./message.php";
+      xhr.open(method, url);
+      // Step 3: listen for events
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          // insert the response data into our HTML
+          document.getElementById("result").innerHTML = xhr.responseText;
+        }
+      };
+      // Step 4: send the request
+      let myForm = document.getElementById("mainForm");
+      let usersData = new FormData(myForm);
+      xhr.send(usersData);
+    };
+  </script>
+</body>
+</html>

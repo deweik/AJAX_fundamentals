@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <style>
+      textarea {
+        margin-top: 1em;
+        width: 500px;
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <button id="success">Click to start XHR (success)</button>
+      <button id="error">Click to start XHR (error)</button>
+      <button id="abort">Click to start XHR (abort)</button>
+    </div>
+    <!-- output -->
+    <textarea class="log" readonly></textarea>
+    <script>
+      // grab the relavent elements
+      const btnSuccess = document.getElementById("success");
+      const btnError = document.getElementById("error");
+      const btnAbort = document.getElementById("abort");
+      const log = document.querySelector(".log");
+
+      // add event listeners
+      function addListeners(xhr) {
+        // loadstart fires when a request has started to load data
+        xhr.addEventListener("loadstart", handleEvent);
+
+        // load fires when an XMLhttpRequest transaction has successfully completed.
+        xhr.addEventListener("load", handleEvent);
+
+        // loadend fires when a request has completed after load (either in success or failure).
+        xhr.addEventListener("loadend", handleEvent);
+
+        // progress fires periodically when a request receives more data back from the server.
+        xhr.addEventListener("progress", handleEvent);
+
+        // error fires when the request encountered an error.
+        xhr.addEventListener("error", handleEvent);
+
+        // abort fires when the request has been aborted.
+        xhr.addEventListener("abort", handleEvent);
+      }
+
+      // handle event logging
+      function handleEvent(e) {
+        log.textContent = log.textContent + `${e.type}: ${e.loaded} bytes transferred\n`;
+      }
+
+      // set up our AJAX function / engine /object
+      function runXHR(url) {
+        log.textContent = ""; // clear log
+        //step 1: create a new XMLHttpRequest object
+        let xhr = new XMLHttpRequest();
+        //step 2: add event listeners
+        addListeners(xhr);
+        //step 3: configure it: GET-request for the URL / the third parameter sets the request to asynchronous
+        xhr.open('GET', url, true);
+        //step 4: send the request over the network
+        xhr.send();
+        return xhr;
+      }
+      
+
+      // trigger our AJAX request
+      btnSuccess.addEventListener("click", () => {
+        runXHR('http://openlibrary.org/search.json?q=the+lord+of+the+rings');
+      });
+
+      btnError.addEventListener("click", () => {
+        runXHR('http://fakeurl');
+      });
+
+      btnAbort.addEventListener("click", () => {
+        runXHR('http://openlibrary.org/search.json?q=the+lord+of+the+rings').abort();
+      });
+
+    </script>
+  </body>
+</html>
