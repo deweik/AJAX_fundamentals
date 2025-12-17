@@ -1,0 +1,18 @@
+<html>
+  <body>
+    <h1>Fetch</h1>
+    <script>
+      let url = "https://jsonplaceholder.typicode.com/todos/1"
+      fetch(url)
+        .then( (res) => {
+          return res.json();
+        })
+        .then( (jsobject) => {
+          console.log(jsobject.title);
+        })
+        .catch( (e) => {
+          console.log("Oops, this has been ackward - there's been a network error:", e);
+        } );
+    </script>
+  </body>
+</html>
