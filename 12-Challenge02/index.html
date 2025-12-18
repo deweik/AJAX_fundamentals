@@ -1,0 +1,110 @@
+<html>
+  <style>
+    body {
+      background-color: #ffcc00;
+      font-family: sans-serif;
+    }
+    h1 {
+      
+      text-align: center;
+      padding-top:140px;
+      font-size: 60px;
+      margin: -15px;
+    }
+    p {
+      text-align: center;
+      color: #907400;
+    }
+    p#btn {
+      cursor: pointer;
+    }
+    img{
+      margin: auto;
+      display: block;
+      width: 30%;
+    }
+  </style>
+  <body>
+    <h1 id="iptext">This will be replaced with your public IP address</h1>
+    <br>
+    <p>( This is your IP address ... probably)</p>
+    <p id="btn">Show Image</p>
+    <img>
+    <script>
+      // ******************** FETCHING THE IP ADDRESS
+      let url = "ahttp://worldtimeapi.org/api/timezone/America/Los_Angeles";
+      let h = new Headers();
+      h.append("Accept", "application/json");
+
+      let req = new Request(url, {
+        method: "GET",
+        headers: h,
+      });
+
+      fetch(req)
+        .then( (res) => {
+          return res.json();
+        })
+        .then( (jsObject) => {
+          document.getElementById("iptext").innerText = jsObject.client_ip;
+        })
+        .catch( (err) => {
+          console.log("There was a network error: " + err.message);
+        });
+
+      // ******************** SHOWING THE IMAGE
+      let paraButton = document.getElementById("btn");
+      let imageURL = "./ajax.png";
+      let imgElement = document.getElementsByTagName("img")[0];
+
+      paraButton.addEventListener("click", fetchImage);
+
+      // ** This is the simplist approach, but we can't use it in all situations.
+      // ** For example, if we need to set headers, we can't do that using the src attribute of the img element.
+      // ** Also, if you allow a user to pick a file from their disk, the file picker will give you a Blob
+      // ** which your browser can load in memory, but it won't have a URL you can use as the src attribute
+      // ** of an img element.
+      
+      // function fetchImage() {
+      //   imgElement.src = imageURL;
+      // }
+      
+      // ***** UNIVERSAL FUNCTIONS **********
+      function checkStatus(response) {
+        if (response.ok) {
+          return Promise.resolve(response);
+        } else {
+          return Promise.reject(new Error('Image file: ' + response.statusText));
+        }
+      };
+
+      function convertToBlob(response) {
+        return response.blob();
+      }
+      
+      // ********** Fetch Image ************
+      function fetchImage() {
+        let h = new Headers();
+        h.append("Accept", "image/png");
+
+        let req = new Request(imageURL, {
+          method: "GET",
+          headers: h,
+        });
+
+        fetch(req)
+          .then(checkStatus)
+          .then(convertToBlob)
+          .then( (imgObject) => {
+            let pictureURL = URL.createObjectURL(imgObject);
+            imgElement.src = pictureURL;
+            console.log("SUCCESS!");
+          })
+          .catch( (err) => {
+            console.log(err);
+          })
+      }
+
+    </script>
+  </body>
+</html>
